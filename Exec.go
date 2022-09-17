@@ -25,3 +25,27 @@ func Exec(con *sql.Conn, params string, args ...interface{}) bool {
 
 	return true
 }
+
+func OpenTransaction(DB *sql.DB) (*sql.Tx, error) {
+	return DB.Begin()
+}
+func TExec(tx *sql.Tx, params string, args ...interface{}) (int, error) {
+	res, err := tx.Exec(params, args...)
+	if err != nil {
+		tx.Rollback()
+		fmt.Printf("执行%s失败，错误：%v\n", params, err)
+		return 0, err
+	}
+	RowsAffected, _ := res.RowsAffected()
+	fmt.Printf("执行成功，影响了：%v行\n", RowsAffected)
+	return int(RowsAffected), err
+}
+func SubmitTransaction(tx *sql.Tx) error {
+	err := tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		fmt.Printf("提交失败，事务已回滚，错误：%v\n", err)
+		return err
+	}
+	return nil
+}

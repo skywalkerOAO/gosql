@@ -21,6 +21,9 @@ func init() {
 func GetDBCon(NickName string) (*sql.Conn, error) {
 	return dbPoolObjectMap[NickName].Conn(context.Background())
 }
+func GetDB(NickName string) *sql.DB {
+	return dbPoolObjectMap[NickName]
+}
 func GetRedisCon(NickName string) redis.Conn {
 	return redisPoolObjectMap[NickName]
 }
