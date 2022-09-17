@@ -21,11 +21,20 @@ res1 := gosql.Query(con,"SELECT * FROM user WHERE id = ?",10086)
 res2 := gosql.Exec(con2,"Insert into plan_list(a,b,c) values(?,?,?)","ABC",1,"2022-01-01")
 value, err := redis.String(c.Do("GET", "gokey"))
 ````
-
 #### 3.Do not forget CLOSE THE DATABASE CONNECT!
 ```` golang
 con.Close()
 con2.Close()
 ````
 
+#### 4.Use Transation
+
+```` golang
+DB := gosql.GetDB("svr1")
+tx, _ := gosql.OpenTransaction(DB)
+gosql.TExec(tx, "INSERT INTO count(name,year,count) VALUES (?,?,?)", "AB1", 1, 3)
+gosql.TExec(tx, "INSERT INTO count(name,year,count) VALUES (?,?,?)", "AB2", 1, 3)
+gosql.TExec(tx, "INSERT INTO count(name,year,count) VALUES (?,?,?)", "ABR", 1, 3)
+gosql.SubmitTransaction(tx)
+````
 # Enjoy hacking!

@@ -37,7 +37,7 @@ func TExec(tx *sql.Tx, params string, args ...interface{}) (int, error) {
 		return 0, err
 	}
 	RowsAffected, _ := res.RowsAffected()
-	fmt.Printf("执行成功，影响了：%v行\n", RowsAffected)
+	fmt.Printf("执行成功：%v行\n", RowsAffected)
 	return int(RowsAffected), err
 }
 func SubmitTransaction(tx *sql.Tx) error {
