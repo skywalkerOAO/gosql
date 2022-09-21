@@ -33,18 +33,18 @@ func TExec(tx *sql.Tx, params string, args ...interface{}) (int, error) {
 	res, err := tx.Exec(params, args...)
 	if err != nil {
 		tx.Rollback()
-		fmt.Printf("执行%s失败，错误：%v\n", params, err)
+		fmt.Printf("FAILED %s ,ERROR：%v\n", params, err)
 		return 0, err
 	}
 	RowsAffected, _ := res.RowsAffected()
-	fmt.Printf("执行成功：%v行\n", RowsAffected)
+	fmt.Printf("SUCCESS %v ROWS \n", RowsAffected)
 	return int(RowsAffected), err
 }
 func SubmitTransaction(tx *sql.Tx) error {
 	err := tx.Commit()
 	if err != nil {
 		tx.Rollback()
-		fmt.Printf("提交失败，事务已回滚，错误：%v\n", err)
+		fmt.Printf("SUBMIT FAILED , Transaction RollBacked ,ERROR：%v\n", err)
 		return err
 	}
 	return nil
