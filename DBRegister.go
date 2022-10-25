@@ -34,7 +34,13 @@ func DBRegister(DrvName string, Server string, DBName string, User string, Passw
 			MaxActive:   0,
 			IdleTimeout: 100,
 			Dial: func() (redis.Conn, error) {
-				return redis.Dial("tcp", address)
+				if User == "" && Password == "" {
+					return redis.Dial("tcp", address)
+				}
+				if User == "" && Password != "" {
+					return redis.Dial("tcp", address, redis.DialPassword(Password))
+				}
+				return redis.Dial("tcp", address, redis.DialUsername(User), redis.DialPassword(Password))
 			},
 		}
 		redisPoolObjectMap[NickName] = db
