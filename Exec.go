@@ -3,27 +3,28 @@ package gosql
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
-func Exec(con *sql.Conn, params string, args ...interface{}) bool {
-	res, err := con.ExecContext(context.Background(), params, args...)
+func Exec(con *sql.Conn, params string, args ...interface{}) (bool, error) {
+	_, err := con.ExecContext(context.Background(), params, args...)
 	if err != nil {
-		fmt.Println("Error time is：" + timeStr())
-		fmt.Println("Error SQL is：" + params)
-		fmt.Println("Database return Error is：" + err.Error())
-		return false
+		dberr := fmt.Sprintf("Database return error is：%s \n", err.Error())
+		errtime := fmt.Sprintf("Error time is：%s \n", timeStr())
+		errsql := fmt.Sprintf("Error SQL is：%s \n", params)
+		e := errors.New(dberr + errtime + errsql)
+		return false, e
 	}
-	if res != nil {
-		RowsAffected, Err := res.RowsAffected()
-		if Err == nil {
-			fmt.Println("Handle：" + params)
-			rows := fmt.Sprintln(RowsAffected, "RowsAffected")
-			fmt.Println(rows)
-		}
-	}
-
-	return true
+	//if res != nil {
+	//	RowsAffected, Err := res.RowsAffected()
+	//	if Err == nil {
+	//		fmt.Println("Handle：" + params)
+	//		rows := fmt.Sprintln(RowsAffected, "RowsAffected")
+	//		fmt.Println(rows)
+	//	}
+	//}
+	return true, nil
 }
 
 func OpenTransaction(DB *sql.DB) (*sql.Tx, error) {
